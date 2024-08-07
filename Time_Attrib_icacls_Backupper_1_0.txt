@@ -3,8 +3,8 @@
 $From                		 = 'C:\Dev_Unity_Projects'
 $To                		 	 = 'C:\Dev_Unity_Projects'
 $FileFilterExtension		 = '*.*'
-$BackupTimeAndAttributes	 = 'C:\cmd_experiments\BackupTIMESTAMPandATTRIBUTE.csv'
-$BackupSecurity			 	 = 'C:\cmd_experiments\BackupICACLS.csv'
+$BackupTimeAndAttributes	 = 'C:\Dev_Tests\time_attrib_icacls_backups\BackupTIMESTAMPandATTRIBUTE.csv'
+$BackupSecurity			 	 = 'C:\Dev_Tests\time_attrib_icacls_backups\BackupICACLS.csv'
 Set-Location $From
 #=================================================================== BACKUP ======================================================================================================================
 Get-Item $From -force | Select-Object -Property FullName, CreationTime, LastWriteTime, LastAccessTime, Attributes | Export-Csv -NoTypeInformation $BackupTimeAndAttributes
@@ -12,8 +12,13 @@ Get-ChildItem  $From -Force -Recurse -Filter $FileFilterExtension | Select-Objec
 $csv = Import-Csv -path $BackupTimeAndAttributes
 ($csv) | ForEach { $_.FullName = (Get-Item $_.FullName -force| Resolve-Path -Relative) }
 $csv | Export-Csv $BackupTimeAndAttributes -NoType
+$newName = ([System.IO.Path]::GetFileNameWithoutExtension($BackupTimeAndAttributes) + "_" + (get-date -format yyyyMMdd_HHmmss) + ([System.IO.Path]::GetExtension($BackupTimeAndAttributes)))
+Rename-Item -Path $BackupTimeAndAttributes -NewName ([System.IO.Path]::GetFileNameWithoutExtension($BackupTimeAndAttributes) + "_" + (get-date -format yyyyMMdd_HHmmss) + ([System.IO.Path]::GetExtension($BackupTimeAndAttributes)))
 icacls $From /save $BackupSecurity /t /c
+Rename-Item -Path $BackupSecurity -NewName ([System.IO.Path]::GetFileNameWithoutExtension($BackupSecurity) + "_" + (get-date -format yyyyMMdd_HHmmss) + ([System.IO.Path]::GetExtension($BackupSecurity)))
 #======================================================== RESTORE TIME AND ATTRIBUTE ============================================================================================================
+#HAVE SET $From, $BackupTimeAndAttributes, $BackupSecurity AND TO RESTORE ICACLS - BE ADMIN
+#git cloning regenerates .GIT so its ok if my script cant find old git to assign old backup to it, it's just how git works, my focus is to save/restore non-.git folder (just like any .git like service folder)
 $csv = Import-Csv $BackupTimeAndAttributes
 foreach($line in $csv)
 { 
