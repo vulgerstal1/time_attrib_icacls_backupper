@@ -1,0 +1,39 @@
+#vulgerstal's timestamp, attribute, security backupper 7g24 8:41p #ICACLS RESTORE REQUIRES ADMIN
+#================================================================== SETTINGS ===================================================================================================================
+$From                		 = 'C:\Dev_Unity_Projects'
+$To                		 	 = 'C:\Dev_Unity_Projects'
+$FileFilterExtension		 = '*.*'
+$BackupTimeAndAttributes	 = 'C:\cmd_experiments\BackupTIMESTAMPandATTRIBUTE.csv'
+$BackupSecurity			 	 = 'C:\cmd_experiments\BackupICACLS.csv'
+Set-Location $From
+#=================================================================== BACKUP ======================================================================================================================
+Get-Item $From -force | Select-Object -Property FullName, CreationTime, LastWriteTime, LastAccessTime, Attributes | Export-Csv -NoTypeInformation $BackupTimeAndAttributes
+Get-ChildItem  $From -Force -Recurse -Filter $FileFilterExtension | Select-Object -Property FullName, CreationTime, LastWriteTime, LastAccessTime, Attributes | Export-Csv -NoTypeInformation -append $BackupTimeAndAttributes
+$csv = Import-Csv -path $BackupTimeAndAttributes
+($csv) | ForEach { $_.FullName = (Get-Item $_.FullName -force| Resolve-Path -Relative) }
+$csv | Export-Csv $BackupTimeAndAttributes -NoType
+icacls $From /save $BackupSecurity /t /c
+#======================================================== RESTORE TIME AND ATTRIBUTE ============================================================================================================
+$csv = Import-Csv $BackupTimeAndAttributes
+foreach($line in $csv)
+{ 
+    $properties = $line | Get-Member -MemberType Properties
+    for($i=0; $i -lt $properties.Count;$i++)
+    {
+        $column = $properties[$i]
+        $columnvalue = $line | Select -ExpandProperty $column.Name	
+		if($column.Name -eq "FullName")
+		{		
+			if($columnvalue)
+			{							
+				if((Test-Path $LINE.fullname -PathType Leaf) -eq $true) { Set-ItemProperty -Path $LINE.fullname -name IsReadOnly -value $false }
+				Set-ItemProperty $LINE.fullname -Name CreationTime -Value $LINE.CreationTime -Force
+				Set-ItemProperty $LINE.fullname -Name LastWriteTime -Value $LINE.LastWriteTime -Force
+				Set-ItemProperty $LINE.fullname -Name LastAccessTime -Value $LINE.LastAccessTime -Force
+				$a = Get-Item $LINE.fullname -force
+				$a.attributes = $LINE.Attributes	
+			}	
+		}
+	}
+}
+icacls (Split-Path -parent $From) /restore $BackupSecurity /t /c
