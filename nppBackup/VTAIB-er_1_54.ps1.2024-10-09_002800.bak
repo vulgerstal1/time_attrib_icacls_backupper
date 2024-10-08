@@ -1,4 +1,4 @@
-#timestamp, attribute, icacls backupper - 9o2024 :32: MANUAL : admin's powershell -ExecutionPolicy Bypass -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -noexit
+#timestamp, attribute, icacls backupper - 7o2024 1:30 MANUAL : admin's powershell -ExecutionPolicy Bypass -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -noexit
 $vtaib_version = '1.54'
 $gitHubBytesPerFileLimit = 100000000
 Read-Host ('VULGERSTAL TAiCACLS '+$vtaib_version+' : ICACLS RESTORATION REQUIRES ADMIN - RERUN IF NEED FUNCTIONALITY FULLY AVAILABLE AND OPERATIONAL')
@@ -72,7 +72,7 @@ if($userRequest -eq '0')
 	($100mbs) | ForEach-Object -Process { $pass = '0' }
 	if($pass -eq '1')
 	{
-		Write-Host("READY TO PUSH, since no >100 mb file found and all Your files will be accepted by GitHub on FREE plan") -ForegroundColor Green
+		Write-Host("READY TO PUSH, since no >100 mb file found and all Your files will be accepted by GitHub on FREE plan") -ForegroundColor Green*
 		& $git checkout $git_branch
 		& $git add .
 		& $git commit -a -m ("committed from VTAIB v." + $vtaib_version + " on " + (get-date -format yyyyMMdd_HHmmss))

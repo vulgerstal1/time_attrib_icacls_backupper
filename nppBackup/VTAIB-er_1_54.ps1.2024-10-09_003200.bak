@@ -1,4 +1,4 @@
-#timestamp, attribute, icacls backupper - 9o2024 :32: MANUAL : admin's powershell -ExecutionPolicy Bypass -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -noexit
+#timestamp, attribute, icacls backupper - 9o2024 :28: MANUAL : admin's powershell -ExecutionPolicy Bypass -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -File "C:\Dev_Tests\time_attrib_icacls_backupper\VTAIB-er_1_54.ps1" -noexit
 $vtaib_version = '1.54'
 $gitHubBytesPerFileLimit = 100000000
 Read-Host ('VULGERSTAL TAiCACLS '+$vtaib_version+' : ICACLS RESTORATION REQUIRES ADMIN - RERUN IF NEED FUNCTIONALITY FULLY AVAILABLE AND OPERATIONAL')
@@ -133,7 +133,7 @@ if($userRequest -eq '1')
 	$git_repo = Read-Host "Set GIT REPO, or LEAVE EMPTY and PRESS ENTER for $git_repo_default"
 	if($git_repo -eq '') { $git_repo = $git_repo_default }
 	Write-Host('CLONING STARTED ' + (get-date -format yyyyMMdd_HHmmss)) -ForegroundColor Green
-	& $git clone -b $git_branch --single-branch ('https://'+$git_user+'@github.com/'+$git_repo_owner+'/'+$git_repo+'.git') .
+	#& $git clone -b $git_branch --single-branch ('https://'+$git_user+'@github.com/'+$git_repo_owner+'/'+$git_repo+'.git') .
 	Get-ChildItem $Target -Recurse | Where-Object { $_.FullName -like "*.gitkeepVUL" } | ForEach-Object -Process { Remove-Item $_.FullName }
 	Write-Host('Removed temporary file in each previously empty folder. Reminder : such file was needed so git would accept empty folder. META of such folders to be restored soon' + (get-date -format yyyyMMdd_HHmmss)) -ForegroundColor Green
 	Get-ChildItem $Target -Recurse | Where-Object { $_.FullName -like "*v100+m.zip" } | ForEach-Object -Process { Expand-Archive $_.FullName -DestinationPath $_.Directory }
